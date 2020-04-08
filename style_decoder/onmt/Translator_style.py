@@ -9,8 +9,8 @@ class Translator(object):
         self.opt = opt
         self.tt = torch.cuda if opt.cuda else torch
 
-        checkpoint = torch.load(opt.decoder_model)
-        encoder_check = torch.load(opt.encoder_model)
+        checkpoint = torch.load(opt.decoder_model, map_location=lambda storage, loc: storage.cuda())
+        encoder_check = torch.load(opt.encoder_model, map_location=lambda storage, loc: storage.cuda())
 
         self.src_dict = encoder_check['dicts']['src']
         self.tgt_dict = checkpoint['dicts']['tgt']
