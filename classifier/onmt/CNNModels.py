@@ -48,6 +48,7 @@ class ConvNet(nn.Module):
 		h_relu = self.relu1(h_conv)
 		print(h_relu.size())
 		h_max = self.maxpool1(h_relu.unsqueeze(1))
+		print(h_max.size())
 		h_flat = h_max.view(-1, self.num_filters)
 		h_drop = self.dropout(h_flat)
 		lin_out = self.linear(h_drop)
