@@ -213,7 +213,7 @@ def eval(model, crit1, crit2, data):
         total_words += targets.data.ne(onmt.Constants.PAD).sum()
 
     model.train()
-    return total_loss / len(data), total_num_correct / total_words
+    return total_loss / len(data), total_num_correct.data / float(total_words)
 
 
 def trainModel(model, trainData, validData, dataset, optim):
@@ -258,16 +258,16 @@ def trainModel(model, trainData, validData, dataset, optim):
             num_words = targets.data.ne(onmt.Constants.PAD).sum()
             report_loss += loss
             report_closs += closs
-            report_num_correct += num_correct
+            report_num_correct += num_correct.data
             report_tgt_words += num_words
             report_src_words += sum(batch[0][1])
             total_loss += loss
-            total_num_correct += num_correct
+            total_num_correct += num_correct.data
             total_words += num_words
             if i % opt.log_interval == -1 % opt.log_interval:
                 print("Epoch %2d, %5d/%5d; acc: %6.2f; ppl: %6.2f; closs: %6.4f; %3.0f src tok/s; %3.0f tgt tok/s; %6.0f s elapsed" %
                       (epoch, i+1, len(trainData),
-                      report_num_correct / report_tgt_words * 100,
+                      report_num_correct / float(report_tgt_words) * 100,
                       math.exp(report_loss / opt.log_interval),
                       report_closs / opt.log_interval,
                       report_src_words/(time.time()-start),
