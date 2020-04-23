@@ -191,7 +191,7 @@ def memoryEfficientLoss(outputs, targets, model, crit1, crit2, eval=False):
     if not eval:
         loss.backward()
     grad_output = None if outputs.grad is None else outputs.grad.data
-    return loss1.data[0], loss2.data[0], grad_output, num_correct
+    return loss1.data, loss2.data, grad_output, num_correct
 
 
 def eval(model, crit1, crit2, data):
