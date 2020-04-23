@@ -26,7 +26,7 @@ class ConvNet(nn.Module):
 				stride=self.strides,        
 				bias=True)
 		self.relu1 = nn.ReLU()
-		self.maxpool1 = nn.MaxPool3d(kernel_size=(pooling_window_size, 1, 1), stride=(1, 1, 1))
+		self.maxpool1 = nn.MaxPool3d(kernel_size=(1, pooling_window_size, 1, 1), stride=(1, 1, 1, 1))
 		self.dropout = nn.Dropout(opt.dropout)
 		self.linear = nn.Linear(opt.num_filters, opt.num_classes - 1)
 		self.sigmoid = nn.Sigmoid()
