@@ -44,9 +44,11 @@ class GlobalAttention(nn.Module):
         targetT = self.linear_in(input).unsqueeze(2)  # batch x dim x 1
 
         # Get attention
-        attn = torch.bmm(context, targetT).squeeze(2)  # batch x sourceL
-        if self.mask is not None:
-            attn.data.masked_fill_(self.mask, -float('inf'))
+        attn = torch.bmm(context, targetT)
+#        self.mask = self.mask.view(targetT.size(0),-1)
+        attn = attn.squeeze()  # batch x sourceL
+#        if self.mask is not None:
+#            attn.data.masked_fill_(self.mask, -float('inf'))
         attn = self.sm(attn)
         attn3 = attn.view(attn.size(0), 1, attn.size(1))  # batch x 1 x sourceL
 
@@ -54,5 +56,5 @@ class GlobalAttention(nn.Module):
         contextCombined = torch.cat((weightedContext, input), 1)
 
         contextOutput = self.tanh(self.linear_out(contextCombined))
-
+#        print(contextOutput)
         return contextOutput, attn

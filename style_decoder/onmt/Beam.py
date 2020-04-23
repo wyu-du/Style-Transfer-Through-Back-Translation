@@ -104,8 +104,8 @@ class Beam(object):
         hyp, attn = [], []
         # print(len(self.prevKs), len(self.nextYs), len(self.attn))
         for j in range(len(self.prevKs) - 1, -1, -1):
-            hyp.append(self.nextYs[j+1][k])
+            hyp.append(self.nextYs[j+1][k].item())
             attn.append(self.attn[j][k])
             k = self.prevKs[j][k]
-
+             
         return hyp[::-1], torch.stack(attn[::-1])
