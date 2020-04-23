@@ -130,7 +130,7 @@ def memoryEfficientLoss(outputs, targets, generator, crit, eval=False):
     num_correct = pred_t.long().squeeze(-1).eq(targets[0].data).sum()
     loss += loss_t
     if not eval:
-            loss_t.div(batch_size).backward()
+        loss_t.div(batch_size).backward()
 
     grad_output = None if outputs.grad is None else outputs.grad.data
     return loss, grad_output, num_correct
