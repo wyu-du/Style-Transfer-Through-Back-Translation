@@ -128,8 +128,7 @@ def memoryEfficientLoss(outputs, targets, generator, crit, eval=False):
     else:
         pred_t = torch.ge(outputs.data, torch.FloatTensor(outputs.size(0), outputs.size(1)).fill_(0.5))
     num_correct = pred_t.long().squeeze(-1).eq(targets[0].data).sum()
-    print(loss_t)
-    loss += loss_t.item()
+    loss += loss_t
     if not eval:
             loss_t.div(batch_size).backward()
 
