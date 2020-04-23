@@ -48,7 +48,7 @@ parser.add_argument('-max_generator_batches', type=int, default=32,
                     help="""Maximum batches of words in a sequence to run
                     the generator on in parallel. Higher is faster, but uses
                     more memory.""")
-parser.add_argument('-epochs', type=int, default=13,
+parser.add_argument('-epochs', type=int, default=50,
                     help='Number of training epochs')
 parser.add_argument('-start_epoch', type=int, default=1,
                     help='The epoch from which to start')
@@ -128,7 +128,7 @@ def memoryEfficientLoss(outputs, targets, generator, crit, eval=False):
     else:
         pred_t = torch.ge(outputs.data, torch.FloatTensor(outputs.size(0), outputs.size(1)).fill_(0.5))
     num_correct = pred_t.long().squeeze(-1).eq(targets[0].data).sum()
-    loss += loss_t.data[0]
+    loss += loss_t.item()
     if not eval:
             loss_t.div(batch_size).backward()
 
