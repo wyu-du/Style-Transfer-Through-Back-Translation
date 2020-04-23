@@ -162,7 +162,7 @@ def eval(model, criterion, data, vocab_size):
         total_words += targets.size(1)
 
     model.train()
-    return total_loss / total_words, total_num_correct / total_words
+    return total_loss / float(total_words), total_num_correct / float(total_words)
 
 
 def trainModel(model, trainData, validData, dataset, optim):
