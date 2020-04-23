@@ -223,7 +223,7 @@ def trainModel(model, trainData, validData, dataset, optim):
             if i % opt.log_interval == -1 % opt.log_interval:
                 print("Epoch %2d, %5d/%5d; acc: %6.2f;  %3.0f src tok/s; %3.0f tgt tok/s; %6.0f s elapsed" %
                       (epoch, i+1, len(trainData),
-                      report_num_correct / report_tgt_words * 100,
+                      report_num_correct / float(report_tgt_words),
                       report_src_words/(time.time()-start),
                       report_tgt_words/(time.time()-start),
                       time.time()-start_time))
