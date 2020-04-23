@@ -214,11 +214,11 @@ def trainModel(model, trainData, validData, dataset, optim):
             optim.step()
             num_words = targets.size(1)
             report_loss += loss
-            report_num_correct += num_correct
+            report_num_correct += num_correct.data
             report_tgt_words += num_words
             report_src_words += sum(batch[0][1])
             total_loss += loss
-            total_num_correct += num_correct
+            total_num_correct += num_correct.data
             total_words += num_words
             if i % opt.log_interval == -1 % opt.log_interval:
                 print("Epoch %2d, %5d/%5d; acc: %6.2f;  %3.0f src tok/s; %3.0f tgt tok/s; %6.0f s elapsed" %
@@ -231,7 +231,7 @@ def trainModel(model, trainData, validData, dataset, optim):
                 sys.stdout.flush()
                 report_loss = report_tgt_words = report_src_words = report_num_correct = 0
                 start = time.time()
-        return total_loss / float(total_words), total_num_correct.data / float(total_words)
+        return total_loss / float(total_words), total_num_correct / float(total_words)
 
     for epoch in range(opt.start_epoch, opt.epochs + 1):
         print('')
