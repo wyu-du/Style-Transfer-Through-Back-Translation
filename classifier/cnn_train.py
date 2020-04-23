@@ -231,7 +231,7 @@ def trainModel(model, trainData, validData, dataset, optim):
                 sys.stdout.flush()
                 report_loss = report_tgt_words = report_src_words = report_num_correct = 0
                 start = time.time()
-        return total_loss / float(total_words), total_num_correct / float(total_words)
+        return total_loss / float(total_words), total_num_correct.data / float(total_words)
 
     for epoch in range(opt.start_epoch, opt.epochs + 1):
         print('')
