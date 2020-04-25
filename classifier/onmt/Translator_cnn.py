@@ -58,7 +58,10 @@ class Translator(object):
            if srcBatch[0].size(0) < self.opt.max_sent_length:
                paddings = Variable(torch.FloatTensor(self.opt.max_sent_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
         one_hot_scatt = one_hot.scatter_(2, inp_, 1)
-        one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+        if srcBatch[0].size(0) < self.opt.max_sent_length:
+            one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+        else:
+            one_hot_input = one_hot_scatt
 
         outputs= self.model(one_hot_input)
         targets = tgtBatch
