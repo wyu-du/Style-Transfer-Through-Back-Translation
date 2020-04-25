@@ -159,16 +159,17 @@ def memoryEfficientLoss(outputs, targets, model, crit1, crit2, eval=False):
     linear = model.class_input(outputs)
     if len(opt.gpus) >= 1:
         softmax = softmax.cuda()
-        curr_zeros = torch.cuda.FloatTensor(opt.sequence_length - linear.size(0),
-                                           linear.size(1), linear.size(2)).zero_()
+        if linear.size(0) < opt.sequence_length:
+            curr_zeros = Variable(torch.cuda.FloatTensor(opt.sequence_length - linear.size(0),
+                                           linear.size(1), linear.size(2)).zero_())
         # Create a batch_size long tensor filled with the label to be generated
         class_tgt = torch.cuda.FloatTensor(linear.size(1)).fill_(opt.tgt_label)
     else:
-        curr_zeros = torch.FloatTensor(opt.sequence_length - linear.size(0), 
-                                           linear.size(1), linear.size(2)).zero_()
+        if linear.size(0) < opt.sequence_length:
+            curr_zeros = Variable(torch.FloatTensor(opt.sequence_length - linear.size(0), 
+                                           linear.size(1), linear.size(2)).zero_())
         class_tgt = torch.FloatTensor(linear.size(1)).fill_(opt.tgt_label)
 
-    curr_zeros = Variable(curr_zeros)
 
     linear_mod = linear.view(-1, linear.size(2))
     linear_mod = linear_mod.div(opt.temperature)
@@ -180,7 +181,6 @@ def memoryEfficientLoss(outputs, targets, model, crit1, crit2, eval=False):
     else:
         soft_cat = soft_out[:opt.sequence_length]
     class_outputs = model.class_model(soft_cat)
-    batch_size = outputs.size(1)
     loss1 = crit1(generator_outputs.view(-1, generator_outputs.size(2)), targets.view(-1))
     class_tgt = Variable(class_tgt)
     loss2 = crit2(class_outputs, class_tgt)
@@ -205,7 +205,6 @@ def eval(model, crit1, crit2, data):
         #  (1) run the encoder on the src
         encStates, context = model.encoder(batch[0])
         outputs = model(batch, encStates, context)
-        if outputs.size(0) > opt.sequence_length: continue
         targets = batch[1][1:]  # exclude <s> from targets
         loss, _, _, num_correct = memoryEfficientLoss(
                 outputs, targets, model, crit1, crit2, eval=True)
@@ -246,7 +245,6 @@ def trainModel(model, trainData, validData, dataset, optim):
             #  (1) run the encoder on the src
             encStates, context = model.encoder(batch[0])
             outputs = model(batch, encStates, context)
-            if outputs.size(0) > opt.sequence_length: continue
             
             targets = batch[1][1:]  # exclude <s> from targets
             loss, closs, gradOutput, num_correct = memoryEfficientLoss(
