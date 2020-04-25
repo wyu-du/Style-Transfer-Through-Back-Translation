@@ -52,11 +52,11 @@ class Translator(object):
         if self.gpu:
            one_hot = Variable(torch.cuda.FloatTensor(srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
            if srcBatch[0].size(0) < self.opt.max_sent_length:
-               paddings = Variable(torch.cuda.FloatTensor(self.opt.sequence_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
+               paddings = Variable(torch.cuda.FloatTensor(self.opt.max_sent_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
         else:
            one_hot = Variable(torch.FloatTensor(srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
            if srcBatch[0].size(0) < self.opt.max_sent_length:
-               paddings = Variable(torch.FloatTensor(self.opt.sequence_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
+               paddings = Variable(torch.FloatTensor(self.opt.max_sent_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
         one_hot_scatt = one_hot.scatter_(2, inp_, 1)
         one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
 
