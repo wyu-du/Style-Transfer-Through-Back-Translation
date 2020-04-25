@@ -199,12 +199,17 @@ def trainModel(model, trainData, validData, dataset, optim):
             inp_ = torch.unsqueeze(inp, 2) # Size is seq_len x batch_size x 1, type: torch.cuda.LongTensor, Variable
             if len(opt.gpus) >= 1:
                 one_hot = Variable(torch.cuda.FloatTensor(src[0].size(0), src[0].size(1), vocab_size).zero_())
+                if src[0].size(0) < opt.sequence_length:
+                    paddings = Variable(torch.cuda.FloatTensor(opt.sequence_length - src[0].size(0), src[0].size(1), vocab_size).zero_())
             else:
                 one_hot = Variable(torch.FloatTensor(src[0].size(0), src[0].size(1), vocab_size).zero_())
+                if src[0].size(0) < opt.sequence_length:
+                    paddings = Variable(torch.FloatTensor(opt.sequence_length - src[0].size(0), src[0].size(1), vocab_size).zero_())
             one_hot_scatt = one_hot.scatter_(2, inp_, 1) # Size: seq_len x batch_size x vocab_size, type: torch.cuda.FloatTensor, Variable
-
+            one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+            
             model.zero_grad()
-            outputs = model(one_hot_scatt)
+            outputs = model(one_hot_input)
             targets = batch[1]  
             loss, gradOutput, num_correct = memoryEfficientLoss(
                     outputs, targets, model, criterion)
