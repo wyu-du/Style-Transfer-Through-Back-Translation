@@ -205,6 +205,7 @@ def eval(model, crit1, crit2, data):
         #  (1) run the encoder on the src
         encStates, context = model.encoder(batch[0])
         outputs = model(batch, encStates, context)
+        if outputs.size(0) > opt.sequence_length: continue
         targets = batch[1][1:]  # exclude <s> from targets
         loss, _, _, num_correct = memoryEfficientLoss(
                 outputs, targets, model, crit1, crit2, eval=True)
@@ -245,6 +246,7 @@ def trainModel(model, trainData, validData, dataset, optim):
             #  (1) run the encoder on the src
             encStates, context = model.encoder(batch[0])
             outputs = model(batch, encStates, context)
+            if outputs.size(0) > opt.sequence_length: continue
             
             targets = batch[1][1:]  # exclude <s> from targets
             loss, closs, gradOutput, num_correct = memoryEfficientLoss(

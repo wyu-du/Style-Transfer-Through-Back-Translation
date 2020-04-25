@@ -59,7 +59,7 @@ class Translator(object):
             for i in range(len(tokens)):
                 if tokens[i] == onmt.Constants.UNK_WORD:
                     _, maxIndex = attn[i].max(0)
-                    tokens[i] = src[maxIndex[0]].item()
+                    tokens[i] = src[maxIndex.item()]
         return tokens
 
     def translateBatch(self, srcBatch, tgtBatch):
