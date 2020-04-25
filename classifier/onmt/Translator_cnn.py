@@ -51,11 +51,16 @@ class Translator(object):
         inp_ = torch.unsqueeze(inp, 2)
         if self.gpu:
            one_hot = Variable(torch.cuda.FloatTensor(srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
+           if srcBatch[0].size(0) < self.opt.sequence_length:
+               paddings = Variable(torch.cuda.FloatTensor(self.opt.sequence_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
         else:
            one_hot = Variable(torch.FloatTensor(srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
+           if srcBatch[0].size(0) < self.opt.sequence_length:
+               paddings = Variable(torch.FloatTensor(self.opt.sequence_length - srcBatch[0].size(0), srcBatch[0].size(1), self.src_dict.size()).zero_())
         one_hot_scatt = one_hot.scatter_(2, inp_, 1)
+        one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
 
-        outputs= self.model(one_hot_scatt)
+        outputs= self.model(one_hot_input)
         targets = tgtBatch
         outputs = Variable(outputs.data, requires_grad=False, volatile=False)
         if self.gpu:
