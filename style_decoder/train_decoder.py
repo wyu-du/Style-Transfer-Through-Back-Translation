@@ -358,6 +358,7 @@ def main():
     print('Building model...')
     
     decoder = onmt.Models_decoder.Decoder(opt, dicts['tgt'])
+    model = onmt.Models_decoder.DecoderModel(decoder)
 
     generator = nn.Sequential(
         nn.Linear(opt.rnn_size, dicts['tgt'].size()),
@@ -368,9 +369,8 @@ def main():
 
     if opt.train_from:
         print('Loading model from checkpoint at %s' % opt.train_from)
-        chk_model = checkpoint['model']
-        generator_state_dict = chk_model.generator.state_dict()
-        model_state_dict = {k: v for k, v in chk_model.state_dict().items() if 'generator' not in k}
+        generator_state_dict = checkpoint['generator']
+        model_state_dict = {k: v for k, v in checkpoint['decoder'].items() if 'generator' not in k}
         model.load_state_dict(model_state_dict)
         generator.load_state_dict(generator_state_dict)
         opt.start_epoch = checkpoint['epoch'] + 1
@@ -381,8 +381,6 @@ def main():
         generator.load_state_dict(checkpoint['generator'])
         opt.start_epoch = checkpoint['epoch'] + 1
     
-    model = onmt.Models_decoder.DecoderModel(decoder)
-
     if len(opt.gpus) >= 1:
         encoder.cuda()
         model.cuda()
