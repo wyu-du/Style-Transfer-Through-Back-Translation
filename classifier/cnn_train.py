@@ -157,7 +157,10 @@ def eval(model, criterion, data, vocab_size):
             if src[0].size(0) < opt.sequence_length:
                 paddings = Variable(torch.FloatTensor(opt.sequence_length - src[0].size(0), src[0].size(1), vocab_size).zero_())
         one_hot_scatt = one_hot.scatter_(2, inp_, 1)
-        one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+        if src[0].size(0) < opt.sequence_length:
+            one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+        else:
+            one_hot_input = one_hot_scatt[:opt.sequence_length]
         
         outputs = model(one_hot_input)
         targets = batch[1] 
@@ -212,7 +215,10 @@ def trainModel(model, trainData, validData, dataset, optim):
                 if src[0].size(0) < opt.sequence_length:
                     paddings = Variable(torch.FloatTensor(opt.sequence_length - src[0].size(0), src[0].size(1), vocab_size).zero_())
             one_hot_scatt = one_hot.scatter_(2, inp_, 1) # Size: seq_len x batch_size x vocab_size, type: torch.cuda.FloatTensor, Variable
-            one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+            if src[0].size(0) < opt.sequence_length:
+                one_hot_input = torch.cat((one_hot_scatt, paddings), dim=0)
+            else:
+                one_hot_input = one_hot_scatt[:opt.sequence_length]
             
             model.zero_grad()
             outputs = model(one_hot_input)
