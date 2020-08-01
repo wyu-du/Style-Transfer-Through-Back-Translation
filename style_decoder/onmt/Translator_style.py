@@ -45,6 +45,12 @@ class Translator(object):
     def buildData(self, srcBatch, goldBatch):
         srcData = [self.src_dict.convertToIdx(b,
                     onmt.Constants.UNK_WORD) for b in srcBatch]
+        srcData = []
+        for b in srcBatch:
+            idx = self.src_dict.convertToIdx(b, onmt.Constants.UNK_WORD)
+            if len(idx) <=0 :
+                idx = 0
+            srcData.append(idx)
         tgtData = None
         if goldBatch:
             tgtData = [self.tgt_dict.convertToIdx(b,
