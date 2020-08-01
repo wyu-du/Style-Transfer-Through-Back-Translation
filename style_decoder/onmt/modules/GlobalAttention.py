@@ -49,7 +49,10 @@ class GlobalAttention(nn.Module):
         if self.mask is not None:
             attn.data.masked_fill_(self.mask.view(targetT.size(0),-1), -float('inf'))
         attn = self.sm(attn)
-        attn3 = attn.view(attn.size(0), 1, attn.size(1))  # batch x 1 x sourceL
+        try:
+            attn3 = attn.view(attn.size(0), 1, attn.size(1))  # batch x 1 x sourceL
+        except:
+            print(attn.size())
 
         weightedContext = torch.bmm(attn3, context).squeeze(1)  # batch x dim
         contextCombined = torch.cat((weightedContext, input), 1)
