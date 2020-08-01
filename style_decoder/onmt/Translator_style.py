@@ -49,7 +49,7 @@ class Translator(object):
         for b in srcBatch:
             idx = self.src_dict.convertToIdx(b, onmt.Constants.UNK_WORD)
             if len(idx) <=0 :
-                idx = 0
+                idx = self.src_dict.convertToIdx(onmt.Constants.UNK_WORD, onmt.Constants.UNK_WORD)
             srcData.append(idx)
         tgtData = None
         if goldBatch:
