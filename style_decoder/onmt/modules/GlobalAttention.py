@@ -52,7 +52,7 @@ class GlobalAttention(nn.Module):
         try:
             attn3 = attn.view(attn.size(0), 1, attn.size(1))  # batch x 1 x sourceL
         except:
-            print(attn.size())
+            attn3 = attn.view(attn.size(0), 1, 1)  # batch x 1 x sourceL
 
         weightedContext = torch.bmm(attn3, context).squeeze(1)  # batch x dim
         contextCombined = torch.cat((weightedContext, input), 1)
